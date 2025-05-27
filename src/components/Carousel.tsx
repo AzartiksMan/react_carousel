@@ -22,30 +22,31 @@ const Carousel: React.FC<Props> = ({
   animationDuration,
   infinite,
 }) => {
-  const handleNextIndex = () => {
-    const maxIndex = images.length - frameSize;
+  const totalItems = images.length;
+  const maxTranslate = Math.max(0, totalItems - frameSize);
 
-    if (infinite) {
-      setCurrentIndex(prev => (prev + step) % images.length);
-    } else {
-      if (currentIndex >= maxIndex) {
-        return;
+  const handleNextIndex = () => {
+    setCurrentIndex(prev => {
+      const next = prev + step;
+
+      if (prev >= maxTranslate) {
+        return infinite ? 0 : prev;
       }
 
-      setCurrentIndex(prev => Math.min(prev + step, maxIndex));
-    }
+      return Math.min(next, maxTranslate);
+    });
   };
 
   const handlePrevIndex = () => {
-    if (infinite) {
-      setCurrentIndex(prev => (prev - step + images.length) % images.length);
-    } else {
-      if (currentIndex <= 0) {
-        return;
+    setCurrentIndex(prev => {
+      const previous = prev - step;
+
+      if (prev <= 0) {
+        return infinite ? maxTranslate : prev;
       }
 
-      setCurrentIndex(prev => Math.max(prev - step, 0));
-    }
+      return Math.max(previous, 0);
+    });
   };
 
   return (
